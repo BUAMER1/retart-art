@@ -974,11 +974,17 @@ function openCheckout() {
 function shippingFee() { return document.querySelector('input[name="delivery"]:checked').value === 'jeddah' ? 20 : 35; }
 function updateShipping() { document.getElementById('shippingSummary').textContent = 'المنتجات: '+cartTotal()+' ر.س | الشحن: '+shippingFee()+' ر.س | الإجمالي للتحويل: '+(cartTotal()+shippingFee())+' ر.س'; }
 document.querySelectorAll('input[name="delivery"]').forEach(function(el){el.addEventListener('change',updateShipping);});
-function cartOrderNowWithDetails() {
+async function cartOrderNowWithDetails() {
   if (!cart.length) return;
   if (!WHATSAPP) { document.getElementById("note").textContent = CS().needWa; return; }
   var t = T[lang], cs = CS();
+  var btn = document.getElementById("chkConfirm"); if(btn.disabled) return; btn.disabled=true;
   var orderId = "RT-" + crypto.randomUUID();
+  try {
+    var response = await fetch('/api/orders', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({order_number:orderId,customer_name:document.getElementById('chkName').value.trim(),phone:document.getElementById('chkPhone').value.trim(),city:document.getElementById('chkCity').value.trim(),address:document.getElementById('chkAddress').value.trim(),delivery:document.querySelector('input[name="delivery"]:checked').value,products:cart.map(({id,qty,color,sizeIdx})=>({id,qty,color,sizeIdx})),gift:!!giftFee(),notes:document.getElementById('chkNotes').value.trim()})});
+    if(!response.ok) throw Error('save');
+  } catch(e) { document.getElementById('paymentNotice').textContent='تعذر حفظ الطلب. حاول مرة أخرى.'; btn.disabled=false; return; }
+
   var lines = [cs.waIntro, "رقم الطلب المبدئي: " + orderId, "الحالة: بانتظار مراجعة التحويل", ""];
   lines.push("*البيانات:*");
   lines.push("- الاسم: " + document.getElementById("chkName").value.trim());
@@ -1005,8 +1011,8 @@ function cartOrderNowWithDetails() {
   if (no) lines.push(cs.waNotes + ": " + no);
   lines.push("");
   lines.push(cs.waTail);
-  window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
-  document.getElementById("paymentNotice").textContent = "تم تجهيز رسالة الطلب المبدئي. أرفق إيصال التحويل في واتساب؛ الطلب غير مؤكد حتى تتم مراجعة الدفع.";
+  var link=document.createElement('a'); link.href="https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n")); link.target='_blank'; link.rel='noopener'; link.textContent='فتح واتساب وإرسال الإيصال'; link.className='btn'; document.getElementById('paymentNotice').replaceChildren(link); cart=[]; saveCart(); renderCart(); btn.disabled=false;
+  document.getElementById("paymentNotice").prepend("تم حفظ الطلب المبدئي. أرسل الإيصال للمراجعة: ");
 }
 
 loadCart();
