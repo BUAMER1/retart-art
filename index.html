@@ -278,11 +278,11 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
     <div class="ch-row"><label>تفاصيل العنوان</label><textarea id="chkAddress"></textarea></div>
     <div class="delivery-group">
       <legend>اختيار التوصيل</legend>
-      <label class="delivery-opt"><input type="radio" name="delivery" value="aramex" checked><span>شحن عبر أرامكس (داخل السعودية)</span></label>
-      <label class="delivery-opt"><input type="radio" name="delivery" value="jeddah"><span>مندوب داخل جدة (تسليم يدوي)</span></label>
+      <label class="delivery-opt"><input type="radio" name="delivery" value="aramex" checked><span>شحن لباقي السعودية — 35 ر.س</span></label>
+      <label class="delivery-opt"><input type="radio" name="delivery" value="jeddah"><span>مندوب داخل جدة — 20 ر.س</span></label>
     </div>
     <div class="ch-row"><label>ملاحظات إضافية</label><textarea id="chkNotes"></textarea></div>
-    <div class="payment-box">
+    <div class="bank-details" id="shippingSummary" aria-live="polite"></div><p>مدة تجهيز الرسم: 3–7 أيام، بخلاف مدة الشحن.</p><div class="payment-box">
       <h3>طريقة الدفع</h3>
       <div class="payment-options">
         <label class="payment-option"><input type="radio" name="paymentMethod" value="transfer" checked><span>تحويل بنكي (الراجحي)</span></label>
@@ -340,7 +340,7 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
   </section>
 
   <section class="info" id="info"></section>
-  <footer id="foot"></footer>
+  <section class="bank-details" style="margin:24px 0"><h3>سياسات المتجر</h3><details><summary>الشحن والتجهيز</summary><p>التوصيل داخل جدة 20 ريالاً، وباقي السعودية 35 ريالاً. تجهيز الرسم خلال 3–7 أيام، بخلاف مدة الشحن. يتم تنسيق موعد التسليم عبر واتساب.</p></details><details><summary>الاستبدال والاسترجاع</summary><p>المنتجات المصنوعة حسب مواصفات العميل تخضع للاستثناءات النظامية من حق العدول، دون المساس بحقوق العميل عند وجود عيب أو عدم مطابقة الطلب. للطلبات الأخرى تطبق الحقوق والمدد النظامية. تواصل معنا عبر واتساب لمعالجة المشكلة.</p></details><details><summary>الخصوصية</summary><p>تستخدم بيانات الاسم والجوال والعنوان وتفاصيل الطلب لتنفيذ الطلب والتوصيل والتواصل ومراجعة التحويل. ترسل البيانات عبر واتساب عند اختيار إرسال الطلب. تحفظ السلة محلياً في متصفحك. للاستفسار عن بياناتك أو طلب تصحيحها أو حذفها تواصل معنا عبر واتساب، مع مراعاة متطلبات الاحتفاظ النظامية.</p></details><details><summary>الشروط والأحكام</summary><p>الأسعار بالريال السعودي. يظهر إجمالي المنتجات والشحن قبل التحويل. الطلب لا يعد مؤكداً إلا بعد مراجعة التحويل وموافقة المتجر. قد تختلف تفاصيل الرسم اليدوي قليلاً دون الإخلال بالمواصفات المتفق عليها.</p></details></section><footer id="foot"></footer>
 </div>
 
 <div class="cart-backdrop" id="cartBackdrop"></div>
@@ -586,6 +586,7 @@ function itemName(it) {
   return name;
 }
 function renderCart() {
+  updateShipping();
   var t = T[lang], cs = CS();
   var n = cartCount();
   document.getElementById("cartFabLabel").textContent = cs.cart;
@@ -944,8 +945,8 @@ document.getElementById("chkConfirm").addEventListener("click", function () {
   var phone = document.getElementById("chkPhone").value.trim();
   var method = document.querySelector('input[name="paymentMethod"]:checked');
   var receipt = document.getElementById("paymentReceipt");
-  if (!name || !phone) {
-    document.getElementById("paymentNotice").textContent = "يرجى إدخال الاسم ورقم الجوال.";
+  if (!name || !phone || !document.getElementById("chkCity").value.trim() || !document.getElementById("chkAddress").value.trim() || !cart.length) {
+    document.getElementById("paymentNotice").textContent = "يرجى إدخال الاسم والجوال والمدينة والعنوان والتأكد من وجود منتجات في السلة.";
     return;
   }
   if (!method || method.value !== "transfer") {
@@ -965,15 +966,20 @@ function openCheckout() {
     document.getElementById("note").textContent = "السلة فارغة.";
     return;
   }
+  updateShipping();
   document.getElementById("checkoutSection").style.display = "block";
   document.getElementById("checkoutSection").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function shippingFee() { return document.querySelector('input[name="delivery"]:checked').value === 'jeddah' ? 20 : 35; }
+function updateShipping() { document.getElementById('shippingSummary').textContent = 'المنتجات: '+cartTotal()+' ر.س | الشحن: '+shippingFee()+' ر.س | الإجمالي للتحويل: '+(cartTotal()+shippingFee())+' ر.س'; }
+document.querySelectorAll('input[name="delivery"]').forEach(function(el){el.addEventListener('change',updateShipping);});
 function cartOrderNowWithDetails() {
   if (!cart.length) return;
   if (!WHATSAPP) { document.getElementById("note").textContent = CS().needWa; return; }
   var t = T[lang], cs = CS();
-  var lines = [cs.waIntro, ""];
+  var orderId = "RT-" + crypto.randomUUID();
+  var lines = [cs.waIntro, "رقم الطلب المبدئي: " + orderId, "الحالة: بانتظار مراجعة التحويل", ""];
   lines.push("*البيانات:*");
   lines.push("- الاسم: " + document.getElementById("chkName").value.trim());
   lines.push("- الجوال: " + document.getElementById("chkPhone").value.trim());
@@ -990,7 +996,9 @@ function cartOrderNowWithDetails() {
   });
   if (giftFee()) lines.push("- " + cs.waGift);
   lines.push("");
-  lines.push(cs.waTotal + ": " + cartTotal() + " " + t.cur);
+  lines.push("المنتجات: " + cartTotal() + " " + t.cur);
+  lines.push("الشحن: " + shippingFee() + " " + t.cur);
+  lines.push("الإجمالي: " + (cartTotal()+shippingFee()) + " " + t.cur);
   var d = document.getElementById("detail").value.trim();
   if (d) lines.push(cs.waDetails + ": " + d);
   var no = document.getElementById("notes").value.trim();
@@ -998,10 +1006,11 @@ function cartOrderNowWithDetails() {
   lines.push("");
   lines.push(cs.waTail);
   window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
-  document.getElementById("paymentNotice").textContent = "تم تجهيز رسالة الطلب. أرفق إيصال التحويل في واتساب؛ الطلب غير مؤكد حتى تتم مراجعة الدفع.";
+  document.getElementById("paymentNotice").textContent = "تم تجهيز رسالة الطلب المبدئي. أرفق إيصال التحويل في واتساب؛ الطلب غير مؤكد حتى تتم مراجعة الدفع.";
 }
 
 loadCart();
 render();
+updateShipping();
 </script>
 </body></html>
