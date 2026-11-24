@@ -1,4 +1,5 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}@media(max-width:600px){input,select,textarea{font-size:16px!important;max-width:100%;min-width:0} .cart-drawer{max-width:100vw;width:100%;} .ch-actions{flex-wrap:wrap} .ch-actions button{flex:1 1 100%;min-height:48px} .bank-copy{overflow-wrap:anywhere} .checkout-section{scroll-margin-top:20px} button{min-height:44px}}
+</style>
 <title>retart</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&display=swap">
@@ -278,8 +279,8 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
     <div class="ch-row"><label>تفاصيل العنوان</label><textarea id="chkAddress"></textarea></div>
     <div class="delivery-group">
       <legend>اختيار التوصيل</legend>
-      <label class="delivery-opt"><input type="radio" name="delivery" value="aramex" checked><span>شحن لباقي السعودية — 35 ر.س</span></label>
-      <label class="delivery-opt"><input type="radio" name="delivery" value="jeddah"><span>مندوب داخل جدة — 20 ر.س</span></label>
+      <label class="delivery-opt"><input type="radio" name="delivery" value="aramex" checked><span>أرامكس — 28 ر.س</span></label>
+      <label class="delivery-opt"><input type="radio" name="delivery" value="smsa"><span>سمسا — 28 ر.س</span></label><label class="delivery-opt"><input type="radio" name="delivery" value="jeddah"><span>مندوب داخل جدة — 28 ر.س</span></label>
     </div>
     <div class="ch-row"><label>ملاحظات إضافية</label><textarea id="chkNotes"></textarea></div>
     <div class="bank-details" id="shippingSummary" aria-live="polite"></div><p>مدة تجهيز الرسم: 3–7 أيام، بخلاف مدة الشحن.</p><div class="payment-box">
@@ -295,13 +296,13 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
         <div><strong>البنك</strong><div>مصرف الراجحي</div></div>
         <div><strong>رقم الحساب</strong><div class="bank-copy">0771000100006083468232</div></div>
         <div><strong>رقم الآيبان</strong><div class="bank-copy">SA52 8000 0869 6080 1346 8232</div></div>
-        <div class="ch-row"><label for="paymentReceipt">إرفاق إيصال التحويل</label><input class="receipt-input" id="paymentReceipt" type="file" accept="image/*,.pdf"><p class="payment-muted">بعد فتح واتساب، أرفق صورة الإيصال في المحادثة لإتمام مراجعة الطلب.</p></div>
+        <div class="ch-row"><label for="paymentReceipt">إرفاق إيصال التحويل</label><input class="receipt-input" id="paymentReceipt" type="file" accept="image/jpeg,image/png,application/pdf"><p class="payment-muted">يرفع الإيصال بشكل خاص لمراجعة الإدارة (PDF أو PNG أو JPEG، حتى 5 MB).</p></div>
       </div>
     </div>
-    <p class="payment-muted" id="paymentNotice" aria-live="polite">سيتم إرسال تفاصيل الطلب عبر واتساب، ويظل الطلب بانتظار مراجعة التحويل.</p>
+    <p class="payment-muted" id="paymentNotice" aria-live="polite">سيتم حفظ الطلب والإيصال، ويظل الطلب بانتظار مراجعة التحويل.</p>
     <div class="ch-actions">
       <button class="btn alt" id="chkBack" type="button">العودة للسلة</button>
-      <button class="btn" id="chkConfirm" type="button">إرسال الطلب وإيصال التحويل عبر واتساب</button>
+      <button class="btn" id="chkConfirm" type="button">تأكيد الطلب ورفع الإيصال</button>
     </div>
   </section>
 
@@ -340,7 +341,7 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
   </section>
 
   <section class="info" id="info"></section>
-  <section class="bank-details" style="margin:24px 0"><h3>سياسات المتجر</h3><details><summary>الشحن والتجهيز</summary><p>التوصيل داخل جدة 20 ريالاً، وباقي السعودية 35 ريالاً. تجهيز الرسم خلال 3–7 أيام، بخلاف مدة الشحن. يتم تنسيق موعد التسليم عبر واتساب.</p></details><details><summary>الاستبدال والاسترجاع</summary><p>المنتجات المصنوعة حسب مواصفات العميل تخضع للاستثناءات النظامية من حق العدول، دون المساس بحقوق العميل عند وجود عيب أو عدم مطابقة الطلب. للطلبات الأخرى تطبق الحقوق والمدد النظامية. تواصل معنا عبر واتساب لمعالجة المشكلة.</p></details><details><summary>الخصوصية</summary><p>تستخدم بيانات الاسم والجوال والعنوان وتفاصيل الطلب لتنفيذ الطلب والتوصيل والتواصل ومراجعة التحويل. ترسل البيانات عبر واتساب عند اختيار إرسال الطلب. تحفظ السلة محلياً في متصفحك. للاستفسار عن بياناتك أو طلب تصحيحها أو حذفها تواصل معنا عبر واتساب، مع مراعاة متطلبات الاحتفاظ النظامية.</p></details><details><summary>الشروط والأحكام</summary><p>الأسعار بالريال السعودي. يظهر إجمالي المنتجات والشحن قبل التحويل. الطلب لا يعد مؤكداً إلا بعد مراجعة التحويل وموافقة المتجر. قد تختلف تفاصيل الرسم اليدوي قليلاً دون الإخلال بالمواصفات المتفق عليها.</p></details></section><footer id="foot"></footer>
+  <section class="bank-details" style="margin:24px 0"><h3>سياسات المتجر</h3><details><summary>الشحن والتجهيز</summary><p>التوصيل عبر سمسا وأرامكس والمندوب داخل جدة: 28 ريال. مدة التجهيز 3–7 أيام بخلاف الشحن.</p></details><details><summary>الاستبدال والاسترجاع</summary><p>المنتجات المصنوعة حسب مواصفات العميل تخضع للاستثناءات النظامية من حق العدول، دون المساس بحقوق العميل عند وجود عيب أو عدم مطابقة الطلب. للطلبات الأخرى تطبق الحقوق والمدد النظامية. تواصل معنا عبر واتساب لمعالجة المشكلة.</p></details><details><summary>الخصوصية</summary><p>تستخدم بيانات الاسم والجوال والعنوان وتفاصيل الطلب لتنفيذ الطلب والتوصيل والتواصل ومراجعة التحويل. تحفظ بيانات الطلب وإيصال التحويل في خدمات الاستضافة الخاصة بالمتجر لمراجعة الطلب. تحفظ السلة محلياً في متصفحك. للاستفسار عن بياناتك أو طلب تصحيحها أو حذفها تواصل معنا عبر واتساب، مع مراعاة متطلبات الاحتفاظ النظامية.</p></details><details><summary>الشروط والأحكام</summary><p>الأسعار بالريال السعودي. يظهر إجمالي المنتجات والشحن قبل التحويل. الطلب لا يعد مؤكداً إلا بعد مراجعة التحويل وموافقة المتجر. قد تختلف تفاصيل الرسم اليدوي قليلاً دون الإخلال بالمواصفات المتفق عليها.</p></details></section><footer id="foot"></footer>
 </div>
 
 <div class="cart-backdrop" id="cartBackdrop"></div>
@@ -513,7 +514,7 @@ var CART_STR = {
   en: {
     cart: "Cart", title: "Shopping cart", empty: "Your cart is empty. Add your favourite products.",
     add: "Add to cart", remove: "Remove", total: "Total", clear: "Clear cart",
-    order: "Order via WhatsApp", needWa: "Add your WhatsApp number in the settings (WHATSAPP) to enable the order button.",
+    order: "Checkout", needWa: "Add your WhatsApp number in the settings (WHATSAPP) to enable the order button.",
     gift: "Includes gift wrapping (+10 SAR)", added: "Added to cart",
     waIntro: "Hello, I'd like to order these items:",
     waTotal: "Total", waNotes: "Notes", waDetails: "Details",
@@ -524,9 +525,10 @@ var CART_STR = {
 var CS = function () { return CART_STR[lang]; };
 
 var cart = [];
-function saveCart() { try { localStorage.setItem("retart-cart", JSON.stringify(cart)); } catch (e) {} }
+function saveCart() { try { localStorage.setItem("retart-cart", JSON.stringify(cart)); localStorage.setItem("retart-gift",document.getElementById("giftWrap").checked?"1":"0"); } catch (e) {} }
 function loadCart() {
   try {
+    document.getElementById("giftWrap").checked=localStorage.getItem("retart-gift")==="1";
     var raw = localStorage.getItem("retart-cart");
     if (!raw) return;
     var arr = JSON.parse(raw);
@@ -871,7 +873,7 @@ document.getElementById("btnEn").addEventListener("click", function () { setLang
 document.getElementById("prodSel").addEventListener("change", function (e) { selected = e.target.value; updateActions(); });
 document.getElementById("colorSel").addEventListener("change", updateActions);
 document.getElementById("sizeSel").addEventListener("change", updateActions);
-document.getElementById("giftWrap").addEventListener("change", function () { updateActions(); renderCart(); });
+document.getElementById("giftWrap").addEventListener("change", function () { updateActions(); saveCart(); renderCart(); });
 document.getElementById("designFile").addEventListener("change", updateActions);
 document.getElementById("detail").addEventListener("input", updateActions);
 document.getElementById("notes").addEventListener("input", updateActions);
@@ -954,7 +956,7 @@ document.getElementById("chkConfirm").addEventListener("click", function () {
     return;
   }
   if (!receipt.files || !receipt.files.length) {
-    document.getElementById("paymentNotice").textContent = "فضلاً اختر إيصال التحويل، ثم أرفقه في محادثة واتساب بعد فتحها.";
+    document.getElementById("paymentNotice").textContent = "فضلاً اختر إيصال التحويل.";
     return;
   }
   cartOrderNowWithDetails();
@@ -966,53 +968,28 @@ function openCheckout() {
     document.getElementById("note").textContent = "السلة فارغة.";
     return;
   }
+  closeCart();
   updateShipping();
   document.getElementById("checkoutSection").style.display = "block";
   document.getElementById("checkoutSection").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function shippingFee() { return document.querySelector('input[name="delivery"]:checked').value === 'jeddah' ? 20 : 35; }
+function shippingFee() { return 28; }
 function updateShipping() { document.getElementById('shippingSummary').textContent = 'المنتجات: '+cartTotal()+' ر.س | الشحن: '+shippingFee()+' ر.س | الإجمالي للتحويل: '+(cartTotal()+shippingFee())+' ر.س'; }
 document.querySelectorAll('input[name="delivery"]').forEach(function(el){el.addEventListener('change',updateShipping);});
 async function cartOrderNowWithDetails() {
-  if (!cart.length) return;
-  if (!WHATSAPP) { document.getElementById("note").textContent = CS().needWa; return; }
-  var t = T[lang], cs = CS();
-  var btn = document.getElementById("chkConfirm"); if(btn.disabled) return; btn.disabled=true;
-  var orderId = "RT-" + crypto.randomUUID();
-  try {
-    var response = await fetch('/api/orders', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({order_number:orderId,customer_name:document.getElementById('chkName').value.trim(),phone:document.getElementById('chkPhone').value.trim(),city:document.getElementById('chkCity').value.trim(),address:document.getElementById('chkAddress').value.trim(),delivery:document.querySelector('input[name="delivery"]:checked').value,products:cart.map(({id,qty,color,sizeIdx})=>({id,qty,color,sizeIdx})),gift:!!giftFee(),notes:document.getElementById('chkNotes').value.trim()})});
-    if(!response.ok) throw Error('save');
-  } catch(e) { document.getElementById('paymentNotice').textContent='تعذر حفظ الطلب. حاول مرة أخرى.'; btn.disabled=false; return; }
-
-  var lines = [cs.waIntro, "رقم الطلب المبدئي: " + orderId, "الحالة: بانتظار مراجعة التحويل", ""];
-  lines.push("*البيانات:*");
-  lines.push("- الاسم: " + document.getElementById("chkName").value.trim());
-  lines.push("- الجوال: " + document.getElementById("chkPhone").value.trim());
-  lines.push("- المدينة/المنطقة: " + document.getElementById("chkCity").value.trim());
-  lines.push("- العنوان: " + document.getElementById("chkAddress").value.trim());
-  var del = document.querySelector('input[name="delivery"]:checked');
-  lines.push("- التوصيل: " + (del && del.value === "jeddah" ? "مندوب داخل جدة" : "شحن عبر أرامكس"));
-  var notes = document.getElementById("chkNotes").value.trim();
-  if (notes) lines.push("- ملاحظات: " + notes);
-  lines.push("");
-  lines.push("*المنتجات:*");
-  cart.forEach(function (it) {
-    lines.push("- " + itemName(it) + " × " + it.qty + " = " + (priceOf(it.id, it.sizeIdx) * it.qty) + " " + t.cur);
-  });
-  if (giftFee()) lines.push("- " + cs.waGift);
-  lines.push("");
-  lines.push("المنتجات: " + cartTotal() + " " + t.cur);
-  lines.push("الشحن: " + shippingFee() + " " + t.cur);
-  lines.push("الإجمالي: " + (cartTotal()+shippingFee()) + " " + t.cur);
-  var d = document.getElementById("detail").value.trim();
-  if (d) lines.push(cs.waDetails + ": " + d);
-  var no = document.getElementById("notes").value.trim();
-  if (no) lines.push(cs.waNotes + ": " + no);
-  lines.push("");
-  lines.push(cs.waTail);
-  var link=document.createElement('a'); link.href="https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n")); link.target='_blank'; link.rel='noopener'; link.textContent='فتح واتساب وإرسال الإيصال'; link.className='btn'; document.getElementById('paymentNotice').replaceChildren(link); cart=[]; saveCart(); renderCart(); btn.disabled=false;
-  document.getElementById("paymentNotice").prepend("تم حفظ الطلب المبدئي. أرسل الإيصال للمراجعة: ");
+ const btn=document.getElementById('chkConfirm'), notice=document.getElementById('paymentNotice'), file=document.getElementById('paymentReceipt').files[0];
+ if(btn.disabled||!cart.length)return;
+ if(!file||file.size>5*1024*1024||!['image/jpeg','image/png','application/pdf'].includes(file.type)){notice.textContent='اختر إيصال PDF أو PNG أو JPEG لا يتجاوز 5 MB';return;}
+ btn.disabled=true;
+ try {
+ const data={customer_name:document.getElementById('chkName').value.trim(),phone:document.getElementById('chkPhone').value.trim(),city:document.getElementById('chkCity').value.trim(),address:document.getElementById('chkAddress').value.trim(),delivery:document.querySelector('input[name="delivery"]:checked').value,products:cart.map(({id,qty,color,sizeIdx})=>({id,qty,color,sizeIdx})),gift:!!giftFee(),notes:[document.getElementById('chkNotes').value,document.getElementById('detail').value,document.getElementById('notes').value].filter(Boolean).join(' | ')};
+ const form=new FormData();form.append('order',JSON.stringify(data));form.append('receipt',file);
+ const response=await fetch('/api/orders',{method:'POST',body:form});if(!response.ok)throw Error('save');const result=await response.json();
+ const link=document.createElement('a');link.href='/track.html#'+result.token;link.textContent='تتبع طلبك — احفظ الرابط الخاص';link.className='btn';
+ notice.replaceChildren(document.createTextNode('تم استلام طلبك '+result.order_number+' بنجاح. بانتظار مراجعة التحويل. الإجمالي: '+result.total+' ر.س. '),link);
+ cart=[];document.getElementById('giftWrap').checked=false;saveCart();renderCart();document.getElementById('paymentReceipt').value='';
+ }catch(e){notice.textContent='تعذر تأكيد الطلب. تواصل معنا للتحقق قبل إعادة المحاولة.';}finally{btn.disabled=false;}
 }
 
 loadCart();
