@@ -1,3 +1,4 @@
+import {catalog} from './products.js';
 const reply=(v,status=200)=>Response.json(v,{status,headers:{'Cache-Control':'no-store'}});
 const prices={mug:65,case:85,plate:55,canvas:115,card:5};
 function auth(c){return !!c.env.ADMIN_PASSWORD && c.request.headers.get('Authorization')==='Bearer '+c.env.ADMIN_PASSWORD;}
@@ -9,7 +10,7 @@ for(const k of ['customer_name','phone','city','address'])if(typeof x[k]!=='stri
 if(!Array.isArray(x.products)||!x.products.length||x.products.length>100||!['jeddah','smsa','aramex'].includes(x.delivery))return reply({error:'invalid'},400);
 if(!(file instanceof File)||!file.size||file.size>5*1024*1024||!['image/jpeg','image/png','application/pdf'].includes(file.type))return reply({error:'receipt'},400);
 const bytes=new Uint8Array(await file.arrayBuffer());const sig=Array.from(bytes.slice(0,8)).map(v=>v.toString(16).padStart(2,'0')).join('');if(!({ 'image/jpeg':sig.startsWith('ffd8ff'),'image/png':sig==='89504e470d0a1a0a','application/pdf':sig.startsWith('255044462d')})[file.type])return reply({error:'receipt'},400);
-let subtotal=x.gift===true?10:0;const products=[];for(const i of x.products){if(!Object.hasOwn(prices,i.id)||!Number.isInteger(i.qty)||i.qty<1||i.qty>100)return reply({error:'item'},400);const price=i.id==='canvas'&&i.sizeIdx===1?155:prices[i.id];subtotal+=price*i.qty;products.push({id:i.id,qty:i.qty,color:String(i.color||'').slice(0,30),sizeIdx:i.sizeIdx===1?1:0,price});}
+const live=await catalog(c.env);let subtotal=x.gift===true?10:0;const products=[];for(const i of x.products){if(!Object.hasOwn(prices,i.id)||!Number.isInteger(i.qty)||i.qty<1||i.qty>100)return reply({error:'item'},400);const product=live.find(p=>p.id===i.id&&!p.hidden);if(!product)return reply({error:'unavailable'},409);const price=i.id==='canvas'&&i.sizeIdx===1?product.large:product.price;subtotal+=price*i.qty;products.push({id:i.id,qty:i.qty,color:String(i.color||'').slice(0,30),sizeIdx:i.sizeIdx===1?1:0,price});}
 const token=crypto.randomUUID()+crypto.randomUUID(), hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(v=>v.toString(16).padStart(2,'0')).join('');
 const order='RT-'+crypto.randomUUID().slice(0,8).toUpperCase(), key='receipts/'+crypto.randomUUID(), shipping=28;
 await c.env.RECEIPTS.put(key,bytes,{httpMetadata:{contentType:file.type}});
