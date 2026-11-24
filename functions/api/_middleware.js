@@ -67,7 +67,7 @@ async function verifyAccess(request) {
     const now = Math.floor(Date.now() / 1000);
 
     if (header.alg !== 'RS256' || typeof header.kid !== 'string') return false;
-    if (payload.iss !== ISSUER) return false;
+    if (typeof payload.iss !== 'string' ||     payload.iss.replace(/\/+$/, '') !== ISSUER) {   console.warn('Access JWT: issuer mismatch');   return false; }
     if (!Array.isArray(payload.aud) || !payload.aud.includes(AUD)) return false;
     if (!Number.isFinite(payload.exp) || payload.exp <= now) return false;
     if (payload.nbf !== undefined && (!Number.isFinite(payload.nbf) || payload.nbf > now)) return false;
