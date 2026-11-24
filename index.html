@@ -226,6 +226,7 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
 }
 @media (prefers-reduced-motion: no-preference) { .btn { transition: filter .15s; } }
 </style>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -299,6 +300,7 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
         <div class="ch-row"><label for="paymentReceipt">إرفاق إيصال التحويل</label><input class="receipt-input" id="paymentReceipt" type="file" accept="image/jpeg,image/png,application/pdf"><p class="payment-muted">يرفع الإيصال بشكل خاص لمراجعة الإدارة (PDF أو PNG أو JPEG، حتى 5 MB).</p></div>
       </div>
     </div>
+    <div id="retartTurnstile" style="margin:12px 0"></div>
     <p class="payment-muted" id="paymentNotice" aria-live="polite">سيتم حفظ الطلب والإيصال، ويظل الطلب بانتظار مراجعة التحويل.</p>
     <div class="ch-actions">
       <button class="btn alt" id="chkBack" type="button">العودة للسلة</button>
@@ -979,6 +981,22 @@ function openCheckout() {
 function shippingFee() { return 28; }
 function updateShipping() { document.getElementById('shippingSummary').textContent = 'المنتجات: '+cartTotal()+' ر.س | الشحن: '+shippingFee()+' ر.س | الإجمالي للتحويل: '+(cartTotal()+shippingFee())+' ر.س'; }
 document.querySelectorAll('input[name="delivery"]').forEach(function(el){el.addEventListener('change',updateShipping);});
+let retartWidget=null, retartResolve=null, retartReject=null;
+async function retartVerify(){
+ const deadline=Date.now()+10000;
+ while(!window.turnstile && Date.now()<deadline)await new Promise(r=>setTimeout(r,150));
+ if(!window.turnstile)throw Error('verification');
+ return new Promise((resolve,reject)=>{
+ const timer=setTimeout(()=>finish(false),90000);
+ function finish(ok,token){clearTimeout(timer);retartResolve=null;retartReject=null;ok?resolve(token):reject(Error('verification'));}
+ retartResolve=t=>finish(true,t);retartReject=()=>finish(false);
+ try{
+ if(retartWidget===null)retartWidget=turnstile.render('#retartTurnstile',{sitekey:'0x4AAAAAAGQH8HfuVuYcPN0I',action:'checkout',execution:'execute',appearance:'interaction-only',size:'flexible',language:'ar',callback:t=>retartResolve?.(t),'error-callback':()=>{retartReject?.();return true;},'expired-callback':()=>retartReject?.(),'timeout-callback':()=>retartReject?.()});
+ else turnstile.reset(retartWidget);
+ turnstile.execute(retartWidget);
+ }catch{finish(false);}
+ });
+}
 async function cartOrderNowWithDetails() {
  const btn=document.getElementById('chkConfirm'), notice=document.getElementById('paymentNotice'), file=document.getElementById('paymentReceipt').files[0];
  if(btn.disabled||!cart.length)return;
@@ -987,11 +1005,12 @@ async function cartOrderNowWithDetails() {
  try {
  const data={customer_name:document.getElementById('chkName').value.trim(),phone:document.getElementById('chkPhone').value.trim(),city:document.getElementById('chkCity').value.trim(),address:document.getElementById('chkAddress').value.trim(),delivery:document.querySelector('input[name="delivery"]:checked').value,products:cart.map(({id,qty,color,sizeIdx,sizeName})=>({id,qty,color,sizeIdx,sizeName,expectedPrice:priceOf(id,sizeIdx)})),gift:!!giftFee(),notes:[document.getElementById('chkNotes').value,document.getElementById('detail').value,document.getElementById('notes').value].filter(Boolean).join(' | ')};
  const form=new FormData();form.append('order',JSON.stringify(data));form.append('receipt',file);
- const response=await fetch('/api/orders',{method:'POST',body:form});if(!response.ok)throw Error('save');const result=await response.json();
+ notice.textContent='جاري التحقق الأمني...';form.append('turnstileToken',await retartVerify());
+ const response=await fetch('/api/orders',{method:'POST',body:form});if(response.status===403)throw Error('verification');if(!response.ok)throw Error('save');const result=await response.json();
  const link=document.createElement('a');link.href='/track.html#'+result.token;link.textContent='تتبع طلبك — احفظ الرابط الخاص';link.className='btn';
  notice.replaceChildren(document.createTextNode('تم استلام طلبك '+result.order_number+' بنجاح. بانتظار مراجعة التحويل. الإجمالي: '+result.total+' ر.س. '),link);
  cart=[];document.getElementById('giftWrap').checked=false;saveCart();renderCart();document.getElementById('paymentReceipt').value='';
- }catch(e){notice.textContent='تعذر تأكيد الطلب. تواصل معنا للتحقق قبل إعادة المحاولة.';}finally{btn.disabled=false;}
+ }catch(e){notice.textContent=e.message==='verification'?'تعذر التحقق الأمني. حاول مرة أخرى.':'تعذر تأكيد الطلب. تواصل معنا للتحقق قبل إعادة المحاولة.';}finally{if(retartWidget!==null)try{turnstile.reset(retartWidget);}catch{}btn.disabled=false;}
 }
 
 async function startCatalog(){try{const r=await fetch('/api/products',{cache:'no-store'});if(!r.ok)throw Error();const rows=await r.json();PRODUCTS=rows.filter(r=>!r.hidden).map(r=>{const p=PRODUCTS.find(p=>p.id===r.id)||{id:r.id};if(!ART[r.id])ART[r.id]='<svg viewBox="0 0 120 120"><rect width="120" height="120" fill="#14236b"/><path d="M60 20L68 50L100 60L68 70L60 100L52 70L20 60L52 50Z" fill="#f4c430"/></svg>';p.price=r.price;if(r.image)ART[r.id]='<img class="contain" src="/api/product-image?key='+encodeURIComponent(r.image)+'" alt="">';T.ar.p[r.id]=[r.name,r.description];T.en.p[r.id]=[r.nameEn,r.descriptionEn];p.sizes=r.sizes?.length?r.sizes:undefined;return p;});if(!find(selected))selected=PRODUCTS[0].id;loadCart();render();updateShipping();}catch{document.getElementById('grid').textContent='تعذر تحميل المنتجات، يرجى تحديث الصفحة';document.getElementById('chkConfirm').disabled=true;}}

@@ -6,6 +6,16 @@ export async function onRequestPost(c){try{
 if(c.request.headers.get('Origin')!==new URL(c.request.url).origin)return reply({error:'origin'},403);
 if(Number(c.request.headers.get('Content-Length'))>6*1024*1024)return reply({error:'size'},413);
 const form=await c.request.formData(), x=JSON.parse(form.get('order')), file=form.get('receipt');
+const challenge=form.get('turnstileToken');
+if(!c.env.TURNSTILE_SECRET_KEY)return reply({error:'verification unavailable'},503);
+if(typeof challenge!=='string'||!challenge||challenge.length>2048)return reply({error:'verification'},403);
+try{
+ const verification=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:c.env.TURNSTILE_SECRET_KEY,response:challenge}),signal:AbortSignal.timeout(10000)});
+ if(!verification.ok)return reply({error:'verification unavailable'},503);
+ const result=await verification.json();
+ if(result.success!==true||result.hostname!=='retart-art.pages.dev'||result.action!=='checkout')return reply({error:'verification'},403);
+}catch{return reply({error:'verification unavailable'},503);}
+
 for(const k of ['customer_name','phone','city','address'])if(typeof x[k]!=='string'||!x[k].trim()||x[k].length>500)return reply({error:'invalid'},400);
 if(!Array.isArray(x.products)||!x.products.length||x.products.length>100||!['jeddah','smsa','aramex'].includes(x.delivery))return reply({error:'invalid'},400);
 if(!(file instanceof File)||!file.size||file.size>5*1024*1024||!['image/jpeg','image/png','application/pdf'].includes(file.type))return reply({error:'receipt'},400);
