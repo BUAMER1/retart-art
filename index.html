@@ -227,7 +227,9 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
 @media (prefers-reduced-motion: no-preference) { .btn { transition: filter .15s; } }
 </style>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
-</head>
+<style>
+:root{--night:#050e1d;--deep:#0a1729;--card:#0b192b;--line:#263750;--moon:#edb955;--pale:#f5f3ef;--muted:#a9b5c7;--sky:#65768e;color-scheme:dark}body{background:radial-gradient(ellipse at top,#13243c,#050e1d 65%);padding:0 18px 90px;font-family:var(--font-body)}header{border-bottom:1px solid var(--line);margin-bottom:18px}.brand{letter-spacing:.16em;color:#fff}.hero{border:1px solid var(--line);background:#081426}.hero-copy{padding:65px 24px}.hero-copy h1{color:#f0c780}.grid{grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin-top:24px}.card{background:#091524;border-radius:18px}.product-link{color:inherit;text-decoration:none;display:block}.card .art{aspect-ratio:1; background:#0c192a}.card .body{padding:14px}.btn:not(.alt){background:linear-gradient(110deg,#f7d48b,#d99a40);color:#07101e}.btn{min-height:48px;border-radius:14px}.social-links{position:static;justify-content:center;margin:24px auto}.social-links .wa-link{background:transparent;border-color:var(--line)}.required{color:#ff6868}.product-view :is(#hero,#demo,#steps,#grid,#info,.wrap>section.bank-details,#foot),.cart-view :is(#hero,#demo,#steps,#grid,#info,.wrap>section.bank-details,#foot,#optionsPanel){display:none!important}.product-view .options-panel{grid-template-columns:1fr;max-width:900px;margin:auto;padding:0}.product-art{aspect-ratio:1;display:grid;place-items:center;background:#0b192b;border:1px solid var(--line);border-radius:22px;overflow:hidden}.product-art img,.product-art svg{width:100%;height:100%;object-fit:contain}.product-visual h1{font-size:1.7rem;margin:18px 0 0}.product-visual p{color:var(--muted)}.opt-card{background:#0a1627;border:1px solid var(--line);border-radius:20px;padding:20px}.opt-row input,.opt-row textarea,.opt-row select,.ch-row input,.ch-row textarea{background:#081323!important;color:var(--pale)!important;border:1px solid var(--line);border-radius:12px;min-height:48px}.product-price{font-size:1.6rem;color:var(--moon);font-weight:700}.backlink{color:var(--moon);text-decoration:none}.cart-view .cart-drawer{position:relative;inset:auto;transform:none;width:100%;max-width:760px;margin:0 auto;background:transparent;border:0;box-shadow:none;display:none;min-height:0}.cart-view .cart-drawer.open{display:flex}.cart-view .cart-backdrop,.cart-view .cart-fab{display:none!important}.cart-view .cart-list{flex:none;overflow:visible}.cart-view .cart-foot{position:static;background:#0b192b;border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:18px}.cart-item{background:#0b192b;border-radius:16px}.checkout-section{max-width:760px;margin:auto}.checkout-view .cart-drawer{display:none!important}.ch-row label{font-weight:700}.cart-view .social-links{margin-top:24px}.home-view .cart-drawer,.product-view .cart-drawer{visibility:hidden}.product-view #optAddBtn{width:100%}@media(min-width:760px){.product-view .options-panel{grid-template-columns:1fr 1fr;align-items:start}.grid{grid-template-columns:repeat(3,1fr)}}
+</style></head>
 <body>
 <div class="wrap">
   <header>
@@ -249,16 +251,16 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
 
   <section class="steps" id="steps"></section>
 
-  <h2 class="title" id="prodTitle"></h2>
+  <h2 hidden class="title" id="prodTitle"></h2>
   <section class="grid" id="grid"></section>
 
     <section class="options-panel" id="optionsPanel" role="dialog" aria-modal="true" aria-labelledby="optTitle">
-    <div class="opt-card">
-      <h3 id="optTitle">اختر خيارات المنتج</h3>
+    <div class="product-visual" id="productVisual"></div><div class="opt-card">
+      <a href="/" class="backlink">← RETART</a><h3 id="optTitle">اختر خيارات المنتج</h3>
       <div class="opt-row"><label id="optColorLabel"></label><select id="optColor"></select></div>
       <div class="opt-row"><label id="optSizeLabel"></label><select id="optSize"></select></div>
       <div class="opt-row"><label id="optDetailLabel"></label><input id="optDetail" type="text" autocomplete="off" placeholder="أي تفاصيل إضافية للرسم؟"></div>
-      <div class="opt-row"><label id="optAttachLabel"></label><input id="optAttach" type="file" accept="image/*"><span class="opt-hint" id="optAttachHint"></span></div>
+      <div hidden class="opt-row"><label id="optAttachLabel"></label><input id="optAttach" type="file" accept="image/*"><span class="opt-hint" id="optAttachHint"></span></div>
       <div class="gift-box" id="optGiftBox">
         <div class="gift-banner" id="optGiftBanner"></div>
         <label class="gift-label">
@@ -267,17 +269,17 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
         </label>
       </div>
       <div class="opt-row"><label id="optNotesLabel"></label><textarea id="optNotes"></textarea></div>
-      <button class="btn opt-add" id="optAddBtn" type="button">أضف إلى السلة</button>
+      <div class="product-price" id="productPrice"></div><button class="btn opt-add" id="optAddBtn" type="button">أضف إلى السلة</button>
       <button class="btn alt" id="optCancel" type="button" style="margin-top:8px;">إلغاء</button>
     </div>
   </section>
 
   <section class="checkout-section" id="checkoutSection" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="chkTitle">
     <h3 id="chkTitle">إتمام الطلب</h3>
-    <div class="ch-row"><label>الاسم الكامل</label><input id="chkName" type="text" placeholder="اسمك الكامل"></div>
-    <div class="ch-row"><label>رقم الجوال</label><input id="chkPhone" type="tel" placeholder="+966 5 xxxx xxxx"></div>
-    <div class="ch-row"><label>المدينة / المنطقة</label><input id="chkCity" type="text" placeholder="مثال: جدة، الرياض"></div>
-    <div class="ch-row"><label>تفاصيل العنوان</label><textarea id="chkAddress"></textarea></div>
+    <div class="ch-row"><label>الاسم الكامل <span class="required">*</span></label><input id="chkName" required type="text" placeholder="اسمك الكامل"></div>
+    <div class="ch-row"><label>رقم الجوال <span class="required">*</span></label><input id="chkPhone" required type="tel" placeholder="05XXXXXXXX" inputmode="numeric" maxlength="10"></div>
+    <div class="ch-row"><label>المدينة / المنطقة <span class="required">*</span></label><input id="chkCity" required type="text" placeholder="مثال: جدة، الرياض"></div>
+    <div class="ch-row"><label>تفاصيل العنوان <span class="required">*</span></label><textarea id="chkAddress" required></textarea></div>
     <div class="delivery-group">
       <legend>اختيار التوصيل</legend>
       <label class="delivery-opt"><input type="radio" name="delivery" value="aramex" checked><span>أرامكس — 28 ر.س</span></label>
@@ -297,7 +299,7 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
         <div><strong>البنك</strong><div>مصرف الراجحي</div></div>
         <div><strong>رقم الحساب</strong><div class="bank-copy">0771000100006083468232</div></div>
         <div><strong>رقم الآيبان</strong><div class="bank-copy">SA52 8000 0869 6080 1346 8232</div></div>
-        <div class="ch-row"><label for="paymentReceipt">إرفاق إيصال التحويل</label><input class="receipt-input" id="paymentReceipt" type="file" accept="image/jpeg,image/png,application/pdf"><p class="payment-muted">يرفع الإيصال بشكل خاص لمراجعة الإدارة (PDF أو PNG أو JPEG، حتى 5 MB).</p></div>
+        <div class="ch-row"><label for="paymentReceipt">إرفاق إيصال التحويل <span class="required">*</span></label><input class="receipt-input" id="paymentReceipt" required type="file" accept="image/jpeg,image/png,application/pdf"><p class="payment-muted">يرفع الإيصال بشكل خاص لمراجعة الإدارة (PDF أو PNG أو JPEG، حتى 5 MB).</p></div>
       </div>
     </div>
     <div id="retartTurnstile" style="margin:12px 0"></div>
@@ -353,7 +355,7 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
     <button class="cart-close" id="cartClose" type="button" aria-label="إغلاق">&#10005;</button>
   </div>
   <div class="cart-list" id="cartList"></div>
-  <div class="cart-foot">
+  <div class="cart-foot"><label class="gift-label"><input type="checkbox" id="cartGift"> <span id="cartGiftText">تغليف هدايا +10 ر.س</span></label><div id="cartBreakdown"></div>
     <p class="cart-gift-note" id="cartGiftNote" hidden></p>
     <div class="cart-sum-row"><span id="cartTotalLabel"></span><b id="cartTotal">0</b></div>
     <button class="btn" id="cartOrder" type="button"></button>
@@ -363,7 +365,6 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
 
 <div class="social-links" aria-label="روابط التواصل">
   <a class="wa-link" href="https://wa.me/966565804049" target="_blank" rel="noopener noreferrer" aria-label="تواصل معنا عبر واتساب">
-    <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M20.52 3.48A11.8 11.8 0 0 0 12.1 0C5.56 0 .24 5.32.24 11.86c0 2.09.55 4.13 1.6 5.93L.14 24l6.37-1.67a11.9 11.9 0 0 0 5.59 1.42h.01c6.54 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.15-3.45-8.41ZM12.1 21.73a9.86 9.86 0 0 1-5.03-1.38l-.36-.21-3.78.99 1.01-3.69-.23-.38a9.82 9.82 0 0 1-1.51-5.2c0-5.45 4.44-9.89 9.9-9.89 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.9 7c0 5.45-4.44 9.89-9.89 9.89Zm5.43-7.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.89.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z"/></svg>
     <span>واتساب</span>
   </a>
   <a class="tt-link" href="https://www.tiktok.com/@retart_art?_r=1&_t=ZS-9BdToVfCXTi" target="_blank" rel="noopener noreferrer" aria-label="حسابنا على تيك توك">
@@ -551,10 +552,10 @@ function addToCart(id, color, sizeIdx) {
   if (!pr) return;
   if (id === "mug" && !color) color = T[lang].colors[0];
   if (pr.sizes?.length && sizeIdx == null) { selected=id;document.getElementById('prodSel').value=id;setupOptionsFor(id);document.getElementById('optionsPanel').style.display='grid';document.getElementById('optionsPanel').classList.add('open');document.getElementById('optionsPanel').scrollIntoView({behavior:'smooth'});return; }
-  var key = itemKey(id, color, sizeIdx), hit = null;
+  var detail = document.getElementById("optDetail").value.trim(), notes = document.getElementById("optNotes").value.trim(); var key = JSON.stringify([id,color,sizeIdx,detail,notes]), hit = null;
   for (var i = 0; i < cart.length; i++) { if (cart[i].key === key) { hit = cart[i]; break; } }
-  if (hit) hit.qty += 1;
-  else cart.push({ key: key, id: id, color: id === "mug" ? color : "", sizeIdx: pr.sizes?.length ? sizeIdx : null, sizeName: pr.sizes?.[sizeIdx]?.name || '', qty: 1 });
+  if (hit) hit.qty = Math.min(100,hit.qty + 1);
+  else cart.push({ key: key, id: id, color: id === "mug" ? color : "", sizeIdx: pr.sizes?.length ? sizeIdx : null, sizeName: pr.sizes?.[sizeIdx]?.name || '', qty: 1, detail:detail, notes:notes });
   saveCart(); renderCart();
   var fab = document.getElementById("cartFab");
   fab.classList.remove("bump"); void fab.offsetWidth; fab.classList.add("bump");
@@ -562,7 +563,7 @@ function addToCart(id, color, sizeIdx) {
 function changeQty(key, delta) {
   for (var i = 0; i < cart.length; i++) {
     if (cart[i].key === key) {
-      cart[i].qty += delta;
+      cart[i].qty = Math.min(100,cart[i].qty + delta);
       if (cart[i].qty <= 0) cart.splice(i, 1);
       break;
     }
@@ -584,7 +585,7 @@ function itemName(it) {
   var name = T[lang].p[it.id][0];
   if (it.color) name += " - " + it.color;
   if (it.sizeIdx != null) {
-    var cv = find(id);
+    var cv = find(it.id);
     if (cv && cv.sizes && cv.sizes[it.sizeIdx]) name += " (" + cv.sizes[it.sizeIdx].name + ")";
   }
   return name;
@@ -597,7 +598,7 @@ function renderCart() {
   document.getElementById("cartCount").textContent = nf(n);
   document.getElementById("cartTitle").textContent = cs.title + " (" + nf(n) + ")";
   document.getElementById("cartTotalLabel").textContent = cs.total;
-  document.getElementById("cartOrder").textContent = cs.order;
+  document.getElementById("cartOrder").textContent = lang==="ar"?"إتمام الطلب":"Checkout"; document.getElementById("cartGift").checked=!!giftFee(); document.getElementById("cartBreakdown").textContent=(lang==="ar"?"الشحن: 28 ر.س · الإجمالي مع الشحن: ":"Shipping: SAR 28 · Total with shipping: ")+(cart.length?cartTotal()+28:0);
   document.getElementById("cartClear").textContent = cs.clear;
   var giftNote = document.getElementById("cartGiftNote");
   if (giftFee()) { giftNote.textContent = cs.gift; giftNote.hidden = false; } else { giftNote.hidden = true; }
@@ -616,7 +617,7 @@ function renderCart() {
     return '<div class="cart-item">' +
       '<div class="ci-art">' + ART[it.id] + '</div>' +
       '<div class="ci-info">' +
-        '<div class="ci-name">' + esc(itemName(it)) + '</div>' +
+        '<div class="ci-name">' + esc(itemName(it)) + '</div><small>'+esc([it.detail,it.notes].filter(Boolean).join(' · '))+'</small>' +
         '<div class="ci-price">' + nf(priceOf(it.id, it.sizeIdx)) + ' ' + t.cur + '</div>' +
         '<div class="ci-qty">' +
           '<button class="q" type="button" data-act="dec" data-key="' + esc(it.key) + '" aria-label="-">&minus;</button>' +
@@ -630,11 +631,13 @@ function renderCart() {
   document.getElementById("cartTotal").textContent = nf(cartTotal()) + " " + t.cur;
 }
 function openCart() {
+  if(!location.pathname.startsWith("/cart")){location.href="/cart.html";return;}
   document.getElementById("cartDrawer").classList.add("open");
   document.getElementById("cartBackdrop").classList.add("open");
   document.getElementById("cartDrawer").setAttribute("aria-hidden", "false");
 }
 function closeCart() {
+  if(location.pathname.startsWith("/cart") && !document.getElementById("checkoutSection").classList.contains("active-checkout")){location.href="/";return;}
   document.getElementById("cartDrawer").classList.remove("open");
   document.getElementById("cartBackdrop").classList.remove("open");
   document.getElementById("cartDrawer").setAttribute("aria-hidden", "true");
@@ -784,7 +787,9 @@ function updateActions() {
     var si = null;
     if (find(selected).sizes?.length) si = parseInt(document.getElementById("sizeSel").value, 10) || 0;
     var col = (selected === "mug") ? document.getElementById("colorSel").value : "";
+    if(document.getElementById("optGiftWrap").checked)document.getElementById("giftWrap").checked=true;
     addToCart(selected, col, si);
+    location.href="/cart.html";
     document.getElementById("note").textContent = CS().added;
   });
   acts.querySelectorAll("button[data-need]").forEach(function (b) {
@@ -824,25 +829,8 @@ function render() {
   document.getElementById("grid").innerHTML = PRODUCTS.map(function (p) {
     var c = t.p[p.id];
     var priceDisplay = p.sizes ? (nf(Math.min(...p.sizes.map(s=>s.price))) + (p.sizes.length>1?' - '+nf(Math.max(...p.sizes.map(s=>s.price))):'')) : nf(p.price);
-    return '<article class="card"><div class="art" aria-hidden="true">' + ART[p.id] + '</div><div class="body"><h3>' + esc(c[0]) + '</h3><p class="desc">' + esc(c[1]) + '</p>' +
-      '<div class="price">' + priceDisplay + ' <span>' + t.cur + '</span></div>' +
-      '<button class="btn pick" type="button" data-id="' + p.id + '">' + t.order + '</button>' +
-      '<button class="btn alt" type="button" data-add="' + p.id + '">' + CS().add + '</button></div></article>';
+    return '<article class="card"><a class="product-link" href="/product.html?id='+encodeURIComponent(p.id)+'"><div class="art">'+ART[p.id]+'</div><div class="body"><h3>'+esc(c[0])+'</h3><div class="price">'+priceDisplay+' '+t.cur+'</div></div></a></article>';
   }).join("");
-  document.querySelectorAll("button.pick").forEach(function (b) {
-    b.addEventListener("click", function () {
-      selected = b.getAttribute("data-id");
-      document.getElementById("prodSel").value = selected;
-      render();
-      setupOptionsFor(selected);
-      document.getElementById("optionsPanel").style.display = "grid";
-      document.getElementById("optionsPanel").classList.add("open");
-      document.getElementById("optionsPanel").scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
-  document.querySelectorAll("button[data-add]").forEach(function (b) {
-    b.addEventListener("click", function () { addToCart(b.getAttribute("data-add")); });
-  });
 
   var sel = document.getElementById("prodSel");
   sel.innerHTML = PRODUCTS.map(function (p) {
@@ -920,7 +908,9 @@ function setupOptionsFor(id) {
     var si = null;
     if (find(selected).sizes?.length) si = parseInt(document.getElementById("optSize").value, 10) || 0;
     var col = (selected === "mug") ? document.getElementById("optColor").value : "";
+    if(document.getElementById("optGiftWrap").checked)document.getElementById("giftWrap").checked=true;
     addToCart(selected, col, si);
+    location.href="/cart.html";
     document.getElementById("optionsPanel").style.display = "none";
     document.getElementById("optionsPanel").classList.remove("open");
   };
@@ -944,14 +934,14 @@ document.getElementById("cartList").addEventListener("click", function (e) {
   else removeItem(key);
 });
 document.getElementById("chkBack").addEventListener("click", function () {
-  document.getElementById("checkoutSection").style.display = "none";
+  location.href="/cart.html";
 });
 document.getElementById("chkConfirm").addEventListener("click", function () {
   var name = document.getElementById("chkName").value.trim();
   var phone = document.getElementById("chkPhone").value.trim();
   var method = document.querySelector('input[name="paymentMethod"]:checked');
   var receipt = document.getElementById("paymentReceipt");
-  if (!name || !phone || !document.getElementById("chkCity").value.trim() || !document.getElementById("chkAddress").value.trim() || !cart.length) {
+  if (!/^[\p{L}\p{M} ]+$/u.test(name) || !/^05[0-9]{8}$/.test(phone) || !/^[\p{L}\p{M} ]+$/u.test(document.getElementById("chkCity").value.trim()) || !document.getElementById("chkCity").value.trim() || !document.getElementById("chkAddress").value.trim() || !cart.length) {
     document.getElementById("paymentNotice").textContent = "يرجى إدخال الاسم والجوال والمدينة والعنوان والتأكد من وجود منتجات في السلة.";
     return;
   }
@@ -972,7 +962,9 @@ function openCheckout() {
     document.getElementById("note").textContent = "السلة فارغة.";
     return;
   }
-  closeCart();
+  document.getElementById("checkoutSection").classList.add("active-checkout");
+  document.getElementById("cartDrawer").classList.remove("open");
+  document.body.classList.add("checkout-view");
   updateShipping();
   document.getElementById("checkoutSection").style.display = "block";
   document.getElementById("checkoutSection").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1003,7 +995,7 @@ async function cartOrderNowWithDetails() {
  if(!file||file.size>5*1024*1024||!['image/jpeg','image/png','application/pdf'].includes(file.type)){notice.textContent='اختر إيصال PDF أو PNG أو JPEG لا يتجاوز 5 MB';return;}
  btn.disabled=true;
  try {
- const data={customer_name:document.getElementById('chkName').value.trim(),phone:document.getElementById('chkPhone').value.trim(),city:document.getElementById('chkCity').value.trim(),address:document.getElementById('chkAddress').value.trim(),delivery:document.querySelector('input[name="delivery"]:checked').value,products:cart.map(({id,qty,color,sizeIdx,sizeName})=>({id,qty,color,sizeIdx,sizeName,expectedPrice:priceOf(id,sizeIdx)})),gift:!!giftFee(),notes:[document.getElementById('chkNotes').value,document.getElementById('detail').value,document.getElementById('notes').value].filter(Boolean).join(' | ')};
+ const data={customer_name:document.getElementById('chkName').value.trim(),phone:document.getElementById('chkPhone').value.trim(),city:document.getElementById('chkCity').value.trim(),address:document.getElementById('chkAddress').value.trim(),delivery:document.querySelector('input[name="delivery"]:checked').value,products:cart.map(({id,qty,color,sizeIdx,sizeName})=>({id,qty,color,sizeIdx,sizeName,expectedPrice:priceOf(id,sizeIdx)})),gift:!!giftFee(),notes:[document.getElementById('chkNotes').value,...cart.map(it=>[itemName(it),it.detail,it.notes].filter(Boolean).join(': '))].filter(Boolean).join(' | ')};
  const form=new FormData();form.append('order',JSON.stringify(data));form.append('receipt',file);
  notice.textContent='جاري التحقق الأمني...';form.append('turnstileToken',await retartVerify());
  const response=await fetch('/api/orders',{method:'POST',body:form});if(response.status===403)throw Error('verification');if(!response.ok)throw Error('save');const result=await response.json();
@@ -1013,7 +1005,16 @@ async function cartOrderNowWithDetails() {
  }catch(e){notice.textContent=e.message==='verification'?'تعذر التحقق الأمني. حاول مرة أخرى.':'تعذر تأكيد الطلب. تواصل معنا للتحقق قبل إعادة المحاولة.';}finally{if(retartWidget!==null)try{turnstile.reset(retartWidget);}catch{}btn.disabled=false;}
 }
 
-async function startCatalog(){try{const r=await fetch('/api/products',{cache:'no-store'});if(!r.ok)throw Error();const rows=await r.json();PRODUCTS=rows.filter(r=>!r.hidden).map(r=>{const p=PRODUCTS.find(p=>p.id===r.id)||{id:r.id};if(!ART[r.id])ART[r.id]='<svg viewBox="0 0 120 120"><rect width="120" height="120" fill="#14236b"/><path d="M60 20L68 50L100 60L68 70L60 100L52 70L20 60L52 50Z" fill="#f4c430"/></svg>';p.price=r.price;if(r.image)ART[r.id]='<img class="contain" src="/api/product-image?key='+encodeURIComponent(r.image)+'" alt="">';T.ar.p[r.id]=[r.name,r.description];T.en.p[r.id]=[r.nameEn,r.descriptionEn];p.sizes=r.sizes?.length?r.sizes:undefined;return p;});if(!find(selected))selected=PRODUCTS[0].id;loadCart();render();updateShipping();}catch{document.getElementById('grid').textContent='تعذر تحميل المنتجات، يرجى تحديث الصفحة';document.getElementById('chkConfirm').disabled=true;}}
+async function startCatalog(){try{const r=await fetch('/api/products',{cache:'no-store'});if(!r.ok)throw Error();const rows=await r.json();PRODUCTS=rows.filter(r=>!r.hidden).map(r=>{const p=PRODUCTS.find(p=>p.id===r.id)||{id:r.id};if(!ART[r.id])ART[r.id]='<svg viewBox="0 0 120 120"><rect width="120" height="120" fill="#14236b"/><path d="M60 20L68 50L100 60L68 70L60 100L52 70L20 60L52 50Z" fill="#f4c430"/></svg>';p.price=r.price;if(r.image)ART[r.id]='<img class="contain" src="/api/product-image?key='+encodeURIComponent(r.image)+'" alt="">';T.ar.p[r.id]=[r.name,r.description];T.en.p[r.id]=[r.nameEn,r.descriptionEn];p.sizes=r.sizes?.length?r.sizes:undefined;return p;});if(!find(selected))selected=PRODUCTS[0].id;loadCart();render();updateShipping();initRoute();}catch{document.getElementById('grid').textContent='تعذر تحميل المنتجات، يرجى تحديث الصفحة';document.getElementById('chkConfirm').disabled=true;}}
+function initRoute(){
+ const path=location.pathname;
+ if(path.startsWith('/product')){const id=new URLSearchParams(location.search).get('id');if(!find(id)){document.getElementById('productVisual').textContent='المنتج غير متاح';return;}selected=id;setupOptionsFor(id);const t=T[lang];document.getElementById('productVisual').innerHTML='<div class="product-art">'+ART[id]+'</div><h1>'+esc(t.p[id][0])+'</h1><p>'+esc(t.p[id][1])+'</p>';const update=()=>document.getElementById('productPrice').textContent=nf(priceOf(id,find(id).sizes?.length?Number(document.getElementById('optSize').value):null))+' '+t.cur;document.getElementById('optSize').onchange=update;update();document.getElementById('optionsPanel').style.display='grid';document.getElementById('optCancel').onclick=()=>location.href='/';}
+ if(path.startsWith('/cart'))openCart();
+}
+document.body.classList.add(location.pathname.startsWith('/product')?'product-view':location.pathname.startsWith('/cart')?'cart-view':'home-view');
+document.getElementById('cartGift').onchange=e=>{document.getElementById('giftWrap').checked=e.target.checked;saveCart();renderCart();};
+for(const id of ['chkName','chkCity'])document.getElementById(id).addEventListener('input',e=>{e.target.value=e.target.value.replace(/[^\p{L}\p{M} ]/gu,'');});
+document.getElementById('chkPhone').addEventListener('input',e=>{e.target.value=e.target.value.replace(/[٠-٩۰-۹]/g,c=>String(c.charCodeAt(0)-(c.charCodeAt(0)>=1776?1776:1632))).replace(/[^0-9]/g,'').slice(0,10);});
 startCatalog();
 </script>
 </body></html>
