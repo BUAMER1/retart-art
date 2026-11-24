@@ -5,7 +5,8 @@ function auth(c){return !!c.env.ADMIN_PASSWORD && c.request.headers.get('Authori
 export async function onRequestPost(c){try{
 if(c.request.headers.get('Origin')!==new URL(c.request.url).origin)return reply({error:'origin'},403);
 if(Number(c.request.headers.get('Content-Length'))>6*1024*1024)return reply({error:'size'},413);
-const form=await c.request.formData(), x=JSON.parse(form.get('order')), file=form.get('receipt');
+let form;
+try{form=await c.request.formData();}catch{return reply({error:'invalid request format'},400);}
 const challenge=form.get('turnstileToken');
 if(!c.env.TURNSTILE_SECRET_KEY)return reply({error:'verification unavailable'},503);
 if(typeof challenge!=='string'||!challenge||challenge.length>2048)return reply({error:'verification'},403);
@@ -16,11 +17,15 @@ try{
  if(result.success!==true||result.hostname!=='retart-art.pages.dev'||result.action!=='checkout')return reply({error:'verification'},403);
 }catch{return reply({error:'verification unavailable'},503);}
 
+let x;
+try{x=JSON.parse(form.get('order'));}catch{return reply({error:'invalid order'},400);}
+if(!x||typeof x!=='object'||Array.isArray(x))return reply({error:'invalid order'},400);
+const file=form.get('receipt');
 for(const k of ['customer_name','phone','city','address'])if(typeof x[k]!=='string'||!x[k].trim()||x[k].length>500)return reply({error:'invalid'},400);
 if(!Array.isArray(x.products)||!x.products.length||x.products.length>100||!['jeddah','smsa','aramex'].includes(x.delivery))return reply({error:'invalid'},400);
 if(!(file instanceof File)||!file.size||file.size>5*1024*1024||!['image/jpeg','image/png','application/pdf'].includes(file.type))return reply({error:'receipt'},400);
 const bytes=new Uint8Array(await file.arrayBuffer());const sig=Array.from(bytes.slice(0,8)).map(v=>v.toString(16).padStart(2,'0')).join('');if(!({ 'image/jpeg':sig.startsWith('ffd8ff'),'image/png':sig==='89504e470d0a1a0a','application/pdf':sig.startsWith('255044462d')})[file.type])return reply({error:'receipt'},400);
-const live=await catalog(c.env);let subtotal=x.gift===true?10:0;const products=[];for(const i of x.products){if(typeof i.id!=='string'||!Number.isInteger(i.qty)||i.qty<1||i.qty>100)return reply({error:'item'},400);const product=live.find(p=>p.id===i.id&&!p.hidden);if(!product)return reply({error:'unavailable'},409);const sizes=product.sizes||[];const size=sizes.find(s=>s.name===i.sizeName);if(sizes.length&&!size)return reply({error:'size changed'},409);if(!sizes.length&&i.sizeName)return reply({error:'size changed'},409);const price=size?size.price:product.price;if(i.expectedPrice!==price)return reply({error:'price changed'},409);subtotal+=price*i.qty;products.push({name:product.name,id:i.id,qty:i.qty,color:String(i.color||'').slice(0,30),sizeIdx:size?sizes.indexOf(size):null,sizeName:size?.name||'',price});}
+const live=await catalog(c.env);let subtotal=x.gift===true?10:0;const products=[];for(const i of x.products){if(!i||typeof i!=='object'||typeof i.id!=='string'||!Number.isInteger(i.qty)||i.qty<1||i.qty>100)return reply({error:'item'},400);const product=live.find(p=>p.id===i.id&&!p.hidden);if(!product)return reply({error:'unavailable'},409);const sizes=product.sizes||[];const size=sizes.find(s=>s.name===i.sizeName);if(sizes.length&&!size)return reply({error:'size changed'},409);if(!sizes.length&&i.sizeName)return reply({error:'size changed'},409);const price=size?size.price:product.price;if(i.expectedPrice!==price)return reply({error:'price changed'},409);subtotal+=price*i.qty;products.push({name:product.name,id:i.id,qty:i.qty,color:String(i.color||'').slice(0,30),sizeIdx:size?sizes.indexOf(size):null,sizeName:size?.name||'',price});}
 const token=crypto.randomUUID()+crypto.randomUUID(), hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(v=>v.toString(16).padStart(2,'0')).join('');
 const order='RT-'+crypto.randomUUID().slice(0,8).toUpperCase(), key='receipts/'+crypto.randomUUID(), shipping=28;
 await c.env.RECEIPTS.put(key,bytes,{httpMetadata:{contentType:file.type}});
