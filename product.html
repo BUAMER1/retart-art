@@ -974,7 +974,7 @@ async function retartVerify(){
  function finish(ok,token){clearTimeout(timer);retartResolve=null;retartReject=null;ok?resolve(token):reject(Error('verification'));}
  retartResolve=t=>finish(true,t);retartReject=()=>finish(false);
  try{
- if(retartWidget===null)retartWidget=turnstile.render('#retartTurnstile',{sitekey:'0x4AAAAAAGQH8HfuVuYcPN0I',action:'checkout',execution:'execute',appearance:'interaction-only',size:'flexible',language:'ar',callback:t=>retartResolve?.(t),'error-callback':()=>{retartReject?.();return true;},'expired-callback':()=>retartReject?.(),'timeout-callback':()=>retartReject?.()});
+ if(retartWidget===null)retartWidget=turnstile.render('#retartTurnstile',{sitekey:'0x4AAAAAAGRkzvg-jzO3yfv8',action:'checkout',execution:'execute',appearance:'interaction-only',size:'flexible',language:'ar',callback:t=>retartResolve?.(t),'error-callback':()=>{retartReject?.();return true;},'expired-callback':()=>retartReject?.(),'timeout-callback':()=>retartReject?.()});
  else turnstile.reset(retartWidget);
  turnstile.execute(retartWidget);
  }catch{finish(false);}
