@@ -14,7 +14,7 @@ try{
  const verification=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:c.env.TURNSTILE_SECRET_KEY,response:challenge}),signal:AbortSignal.timeout(10000)});
  if(!verification.ok)return reply({error:'verification unavailable'},503);
  const result=await verification.json();
- if(result.success!==true||result.hostname!=='retart-art.pages.dev'||result.action!=='checkout')return reply({error:'verification'},403);
+ if(result.success!==true||result.hostname!==new URL(c.request.url).hostname||result.action!=='checkout')return reply({error:'verification'},403);
 }catch{return reply({error:'verification unavailable'},503);}
 
 let x;
@@ -22,6 +22,7 @@ try{x=JSON.parse(form.get('order'));}catch{return reply({error:'invalid order'},
 if(!x||typeof x!=='object'||Array.isArray(x))return reply({error:'invalid order'},400);
 const file=form.get('receipt');
 for(const k of ['customer_name','phone','city','address'])if(typeof x[k]!=='string'||!x[k].trim()||x[k].length>500)return reply({error:'invalid'},400);
+if(!/^[\p{L}\p{M} ]+$/u.test(x.customer_name.trim())||!/[\p{L}]/u.test(x.customer_name)||! /^[\p{L}\p{M} ]+$/u.test(x.city.trim())||!/[\p{L}]/u.test(x.city)||!/^05[0-9]{8}$/.test(x.phone.trim()))return reply({error:'invalid customer details'},400);
 if(!Array.isArray(x.products)||!x.products.length||x.products.length>100||!['jeddah','smsa','aramex'].includes(x.delivery))return reply({error:'invalid'},400);
 if(!(file instanceof File)||!file.size||file.size>5*1024*1024||!['image/jpeg','image/png','application/pdf'].includes(file.type))return reply({error:'receipt'},400);
 const bytes=new Uint8Array(await file.arrayBuffer());const sig=Array.from(bytes.slice(0,8)).map(v=>v.toString(16).padStart(2,'0')).join('');if(!({ 'image/jpeg':sig.startsWith('ffd8ff'),'image/png':sig==='89504e470d0a1a0a','application/pdf':sig.startsWith('255044462d')})[file.type])return reply({error:'receipt'},400);
