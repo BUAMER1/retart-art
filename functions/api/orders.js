@@ -14,7 +14,7 @@ try{
  const verification=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:c.env.TURNSTILE_SECRET_KEY,response:challenge}),signal:AbortSignal.timeout(10000)});
  if(!verification.ok)return reply({error:'verification unavailable'},503);
  const result=await verification.json();
- if(result.success!==true||result.hostname!=='retart-art.pages.dev'||result.action!=='checkout')return reply({error:'verification'},403);
+ if(result.success!==true||result.hostname!==new URL(c.request.url).hostname||result.action!=='checkout')return reply({error:'verification'},403);
 }catch{return reply({error:'verification unavailable'},503);}
 
 let x;
