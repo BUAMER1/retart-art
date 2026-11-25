@@ -276,10 +276,10 @@ footer { color: var(--muted); font-size: .85rem; padding-top: 10px; border-top: 
 
   <section class="checkout-section" id="checkoutSection" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="chkTitle">
     <h3 id="chkTitle">إتمام الطلب</h3>
-    <div class="ch-row"><label>الاسم الكامل <span class="required">*</span></label><input id="chkName" required type="text" placeholder="اسمك الكامل"></div>
+    <div class="ch-row"><label>الاسم الكامل <span class="required">*</span></label><input id="chkName" maxlength="500" required type="text" placeholder="اسمك الكامل"></div>
     <div class="ch-row"><label>رقم الجوال <span class="required">*</span></label><input id="chkPhone" required type="tel" placeholder="05XXXXXXXX" inputmode="numeric" maxlength="10"></div>
-    <div class="ch-row"><label>المدينة / المنطقة <span class="required">*</span></label><input id="chkCity" required type="text" placeholder="مثال: جدة، الرياض"></div>
-    <div class="ch-row"><label>تفاصيل العنوان <span class="required">*</span></label><textarea id="chkAddress" required></textarea></div>
+    <div class="ch-row"><label>المدينة / المنطقة <span class="required">*</span></label><input id="chkCity" maxlength="500" required type="text" placeholder="مثال: جدة، الرياض"></div>
+    <div class="ch-row"><label>تفاصيل العنوان <span class="required">*</span></label><textarea id="chkAddress" maxlength="500" required></textarea></div>
     <div class="delivery-group">
       <legend>اختيار التوصيل</legend>
       <label class="delivery-opt"><input type="radio" name="delivery" value="aramex" checked><span>أرامكس — 28 ر.س</span></label>
@@ -974,7 +974,7 @@ async function retartVerify(){
  function finish(ok,token){clearTimeout(timer);retartResolve=null;retartReject=null;ok?resolve(token):reject(Error('verification'));}
  retartResolve=t=>finish(true,t);retartReject=()=>finish(false);
  try{
- if(retartWidget===null)retartWidget=turnstile.render('#retartTurnstile',{sitekey:'0x4AAAAAAGRkzvg-jzO3yfv8',action:'checkout',execution:'execute',appearance:'interaction-only',size:'flexible',language:'ar',callback:t=>retartResolve?.(t),'error-callback':()=>{retartReject?.();return true;},'expired-callback':()=>retartReject?.(),'timeout-callback':()=>retartReject?.()});
+ if(retartWidget===null)retartWidget=turnstile.render('#retartTurnstile',{sitekey:location.hostname==='design-test.retart-art.pages.dev'?'0x4AAAAAAGRkzvg-jzO3yfv8':'0x4AAAAAAGQH8HfuVuYcPN0I',action:'checkout',execution:'execute',appearance:'interaction-only',size:'flexible',language:'ar',callback:t=>retartResolve?.(t),'error-callback':()=>{retartReject?.();return true;},'expired-callback':()=>retartReject?.(),'timeout-callback':()=>retartReject?.()});
  else turnstile.reset(retartWidget);
  turnstile.execute(retartWidget);
  }catch{finish(false);}
